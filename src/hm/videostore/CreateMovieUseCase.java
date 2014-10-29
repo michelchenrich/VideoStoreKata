@@ -1,5 +1,7 @@
 package hm.videostore;
 
+import hm.videostore.repository.MovieData;
+
 public class CreateMovieUseCase {
     private final int typeCode;
     private final String name;
@@ -10,10 +12,11 @@ public class CreateMovieUseCase {
     }
 
     public String execute() {
-        Movie movie = Context.gateway.create();
-        movie.setName(name);
-        movie.setTypeCode(typeCode);
-        Context.gateway.save(movie);
-        return movie.getId();
+        MovieData movie = new MovieData();
+        movie.id = Context.movieRepository.getNextId();
+        movie.name = name;
+        movie.typeCode = typeCode;
+        Context.movieRepository.save(movie);
+        return movie.id;
     }
 }

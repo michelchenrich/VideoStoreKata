@@ -1,6 +1,6 @@
 package hm.videostore;
 
-public class Rental {
+public class RentalData {
     public String movieId;
     public int daysRented;
 }

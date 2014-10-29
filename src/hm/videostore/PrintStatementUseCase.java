@@ -3,26 +3,29 @@ package hm.videostore;
 import java.util.List;
 
 public class PrintStatementUseCase {
-    private List<Rental> rentals;
+    private List<RentalData> rentals;
 
-    public PrintStatementUseCase(List<Rental> rentals) {
+    public PrintStatementUseCase(List<RentalData> rentals) {
         this.rentals = rentals;
     }
 
-    public Statement execute() {
-        Statement statement = new Statement();
+    public StatementData execute() {
+        StatementData statement = new StatementData();
 
-        for (Rental rental : rentals) {
-            Movie movie = Context.gateway.findById(rental.movieId);
-            if (movie.getTypeCode() == 1)
+        for (RentalData rental : rentals) {
+            int typeCode = Context.movieRepository.findById(rental.movieId).typeCode;
+            if (typeCode == 1)
                 if (rental.daysRented > 2)
                     statement.totalOwed = Rates.regular + (Rates.regularPenalty * (rental.daysRented - 2));
                 else
                     statement.totalOwed = Rates.regular;
-            else if (rental.daysRented > 3)
-                statement.totalOwed = Rates.childrens + (Rates.childrensPenalty * (rental.daysRented - 3));
+            else if (typeCode == 2)
+                if (rental.daysRented > 3)
+                    statement.totalOwed = Rates.childrens + (Rates.childrensPenalty * (rental.daysRented - 3));
+                else
+                    statement.totalOwed = Rates.childrens;
             else
-                statement.totalOwed = Rates.childrens;
+                statement.totalOwed = Rates.newRelease * rental.daysRented;
         }
 
         return statement;

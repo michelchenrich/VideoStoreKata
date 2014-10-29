@@ -1,5 +1,5 @@
 package hm.videostore;
 
-public class Statement {
+public class StatementData {
     public double totalOwed;
 }

@@ -1,5 +1,6 @@
 package hm.videostore;
 
+import hm.videostore.repository.MovieData;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
@@ -8,14 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VideoStoreTest {
-    private List<Rental> rentals;
-    private Statement statement;
-    private InMemoryMovieGateway fakeGateway;
+    private List<RentalData> rentals;
+    private StatementData statement;
 
     private void givenRental(Type type, int daysRented) {
         String movieId = createMovie(type);
 
-        Rental rental = new Rental();
+        RentalData rental = new RentalData();
         rental.movieId = movieId;
         rental.daysRented = daysRented;
         rentals.add(rental);
@@ -35,15 +35,15 @@ public class VideoStoreTest {
 
     @Before
     public void setUp() {
-        fakeGateway = new InMemoryMovieGateway();
-        Context.gateway = fakeGateway;
+        Context.movieRepository = new InMemoryRepository<MovieData>();
 
         double seed = Math.random();
         Rates.regular = seed * 2;
         Rates.regularPenalty = seed * 3;
         Rates.childrens = seed * 1.5;
         Rates.childrensPenalty = seed * 2.5;
-        rentals = new ArrayList<Rental>();
+        Rates.newRelease = seed * 3.5;
+        rentals = new ArrayList<RentalData>();
     }
 
     @Test
@@ -100,5 +100,26 @@ public class VideoStoreTest {
         givenRental(Type.CHILDRENS, 5);
         printStatement();
         assertTotalOwed(Rates.childrens + (Rates.childrensPenalty * 2));
+    }
+
+    @Test
+    public void whenRentingOneNewReleaseForOneDay_TotalShouldBeTheNewReleaseRate() {
+        givenRental(Type.NEW_RELEASE, 1);
+        printStatement();
+        assertTotalOwed(Rates.newRelease);
+    }
+
+    @Test
+    public void whenRentingOneNewReleaseForTwoDays_TotalShouldBeTheNewReleaseRateTimesTwo() {
+        givenRental(Type.NEW_RELEASE, 2);
+        printStatement();
+        assertTotalOwed(Rates.newRelease * 2);
+    }
+
+    @Test
+    public void whenRentingOneNewReleaseForThreeDays_TotalShouldBeTheNewReleaseRateTimesThree() {
+        givenRental(Type.NEW_RELEASE, 3);
+        printStatement();
+        assertTotalOwed(Rates.newRelease * 3);
     }
 }

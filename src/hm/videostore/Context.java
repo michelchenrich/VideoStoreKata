@@ -1,5 +1,8 @@
 package hm.videostore;
 
+import hm.videostore.repository.MovieData;
+import hm.videostore.repository.Repository;
+
 public class Context {
-    public static MovieGateway gateway;
+    public static Repository<MovieData> movieRepository;
 }
