@@ -19,6 +19,8 @@ public class PrintStatementUseCase {
                     statement.totalOwed = Rates.regular + (Rates.regularPenalty * (rental.daysRented - 2));
                 else
                     statement.totalOwed = Rates.regular;
+            else if (rental.daysRented > 3)
+                statement.totalOwed = Rates.childrens + (Rates.childrensPenalty * (rental.daysRented - 3));
             else
                 statement.totalOwed = Rates.childrens;
         }

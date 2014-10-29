@@ -42,6 +42,7 @@ public class VideoStoreTest {
         Rates.regular = seed * 2;
         Rates.regularPenalty = seed * 3;
         Rates.childrens = seed * 1.5;
+        Rates.childrensPenalty = seed * 2.5;
         rentals = new ArrayList<Rental>();
     }
 
@@ -78,5 +79,26 @@ public class VideoStoreTest {
         givenRental(Type.CHILDRENS, 1);
         printStatement();
         assertTotalOwed(Rates.childrens);
+    }
+
+    @Test
+    public void whenRentingOneChildrensMovieForThreeDays_TotalShouldBeTheChildrensRate() {
+        givenRental(Type.CHILDRENS, 3);
+        printStatement();
+        assertTotalOwed(Rates.childrens);
+    }
+
+    @Test
+    public void whenRentingOneChildrensMovieForFourDays_TotalShouldBeTheChildrensRatePlusChildrensPenalty() {
+        givenRental(Type.CHILDRENS, 4);
+        printStatement();
+        assertTotalOwed(Rates.childrens + Rates.childrensPenalty);
+    }
+
+    @Test
+    public void whenRentingOneChildrensMovieForFiveDays_TotalShouldBeTheChildrensRatePlusChildrensPenaltyTimesTwo() {
+        givenRental(Type.CHILDRENS, 5);
+        printStatement();
+        assertTotalOwed(Rates.childrens + (Rates.childrensPenalty * 2));
     }
 }
