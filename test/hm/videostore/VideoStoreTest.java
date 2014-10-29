@@ -1,24 +1,82 @@
 package hm.videostore;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class VideoStoreTest {
+    private List<Rental> rentals;
+    private Statement statement;
+    private InMemoryMovieGateway fakeGateway;
+
+    private void givenRental(Type type, int daysRented) {
+        String movieId = createMovie(type);
+
+        Rental rental = new Rental();
+        rental.movieId = movieId;
+        rental.daysRented = daysRented;
+        rentals.add(rental);
+    }
+
+    private String createMovie(Type type) {
+        return new CreateMovieUseCase(type.code, String.format("Movie no. %f", Math.random())).execute();
+    }
+
+    private void printStatement() {
+        statement = new PrintStatementUseCase(rentals).execute();
+    }
+
+    private void assertTotalOwed(double totalOwed) {
+        assertEquals(totalOwed, statement.totalOwed, .0001);
+    }
+
+    @Before
+    public void setUp() {
+        fakeGateway = new InMemoryMovieGateway();
+        Context.gateway = fakeGateway;
+
+        double seed = Math.random();
+        Rates.regular = seed * 2;
+        Rates.regularPenalty = seed * 3;
+        Rates.childrens = seed * 1.5;
+        rentals = new ArrayList<Rental>();
+    }
+
     @Test
     public void whenRentingOneRegularMovieForOneDay_TotalShouldBeTheRegularRate() {
-        Rates.regular = 2.0;
+        givenRental(Type.REGULAR, 1);
+        printStatement();
+        assertTotalOwed(Rates.regular);
+    }
 
-        List<Rental> rentals = new ArrayList<Rental>();
+    @Test
+    public void whenRentingOneRegularMoviePorTwoDays_TotalShouldBeTheRegularRate() {
+        givenRental(Type.REGULAR, 2);
+        printStatement();
+        assertTotalOwed(Rates.regular);
+    }
 
-        Rental regularMovie = new Rental();
-        regularMovie.movieId = "Regular";
-        regularMovie.daysRented = 1;
+    @Test
+    public void whenRentingOneRegularMovieForThreeDays_TotalShouldBeTheRegularRatePlusRegularPentaltyRate() {
+        givenRental(Type.REGULAR, 3);
+        printStatement();
+        assertTotalOwed(Rates.regular + Rates.regularPenalty);
+    }
 
-        Statement statement = new PrintStatementUseCase(rentals).execute();
+    @Test
+    public void whenRentingOneRegularMovieForFourDays_TotalShouldBeTheRegularRatePlusRegularPenaltyRateTimesTwo() {
+        givenRental(Type.REGULAR, 4);
+        printStatement();
+        assertTotalOwed(Rates.regular + (Rates.regularPenalty * 2));
+    }
 
-        assertNotNull(statement);
+    @Test
+    public void whenRentingOneChildrensMovieForOneDay_TotalShouldBeTheChildrensRate() {
+        givenRental(Type.CHILDRENS, 1);
+        printStatement();
+        assertTotalOwed(Rates.childrens);
     }
 }
