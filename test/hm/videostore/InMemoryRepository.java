@@ -11,7 +11,11 @@ class InMemoryRepository<TEntity extends EntityData> implements Repository<TEnti
     private int incrementalId;
 
     public void save(TEntity entity) {
-        entities.put(entity.id, entity);
+        try {
+            entities.put(entity.id, (TEntity) entity.clone());
+        } catch (CloneNotSupportedException e) {
+            e.printStackTrace();
+        }
     }
 
     public TEntity findById(String id) {

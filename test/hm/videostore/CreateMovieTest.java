@@ -2,6 +2,7 @@ package hm.videostore;
 
 import hm.videostore.repository.MovieData;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -28,6 +29,19 @@ public class CreateMovieTest {
         assertEquals(id2, movie.id);
         assertEquals("Movie Name 2", movie.name);
         assertEquals(Type.CHILDRENS.code, movie.typeCode);
+    }
+
+    @Test
+    public void afterSavingAMovie_RepositoryShouldNotReflectTransientChanges() {
+        MovieData movie = new MovieData();
+        movie.id = "1";
+        movie.name = "a";
+
+        inMemoryRepository.save(movie);
+
+        movie.name = "b";
+
+        assertNotEquals(movie.name, inMemoryRepository.findById(movie.id).name);
     }
 
     private String createMovie(Type type, String name) {
