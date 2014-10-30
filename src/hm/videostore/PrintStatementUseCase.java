@@ -1,33 +1,36 @@
 package hm.videostore;
 
+import static hm.videostore.Context.movieRepository;
+import hm.videostore.repository.MovieData;
+
 import java.util.List;
 
 public class PrintStatementUseCase {
     private List<RentalData> rentals;
+    private StatementData statement;
 
     public PrintStatementUseCase(List<RentalData> rentals) {
         this.rentals = rentals;
     }
 
     public StatementData execute() {
-        StatementData statement = new StatementData();
+        statement = new StatementData();
 
-        for (RentalData rental : rentals) {
-            int typeCode = Context.movieRepository.findById(rental.movieId).typeCode;
-            if (typeCode == 1)
-                if (rental.daysRented > 2)
-                    statement.totalOwed = Rates.regular + (Rates.regularPenalty * (rental.daysRented - 2));
-                else
-                    statement.totalOwed = Rates.regular;
-            else if (typeCode == 2)
-                if (rental.daysRented > 3)
-                    statement.totalOwed = Rates.childrens + (Rates.childrensPenalty * (rental.daysRented - 3));
-                else
-                    statement.totalOwed = Rates.childrens;
-            else
-                statement.totalOwed = Rates.newRelease * rental.daysRented;
-        }
+        for (RentalData rental : rentals) sumRental(rental);
 
         return statement;
+    }
+
+    private void sumRental(RentalData rental) {
+        Movie movie = makeMovie(movieRepository.findById(rental.movieId));
+        statement.totalOwed = movie.calculateRentalPrice(rental.daysRented);
+    }
+
+    private Movie makeMovie(MovieData data) {
+        Movie movie;
+        if (data.typeCode == 1) movie = new RegularMovie();
+        else if (data.typeCode == 2) movie = new ChildrensMovie();
+        else movie = new NewReleaseMovie();
+        return movie;
     }
 }

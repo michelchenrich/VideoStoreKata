@@ -35,13 +35,6 @@ public class VideoStoreTest {
     @Before
     public void setUp() {
         Context.movieRepository = new InMemoryMovieRepository();
-
-        double seed = Math.random();
-        Rates.regular = seed * 2;
-        Rates.regularPenalty = seed * 3;
-        Rates.childrens = seed * 1.5;
-        Rates.childrensPenalty = seed * 2.5;
-        Rates.newRelease = seed * 3.5;
         rentals = new ArrayList<RentalData>();
     }
 
@@ -49,76 +42,76 @@ public class VideoStoreTest {
     public void whenRentingOneRegularMovieForOneDay_TotalShouldBeTheRegularRate() {
         givenRental(Type.REGULAR, 1);
         printStatement();
-        assertTotalOwed(Rates.regular);
+        assertTotalOwed(2);
     }
 
     @Test
     public void whenRentingOneRegularMoviePorTwoDays_TotalShouldBeTheRegularRate() {
         givenRental(Type.REGULAR, 2);
         printStatement();
-        assertTotalOwed(Rates.regular);
+        assertTotalOwed(2);
     }
 
     @Test
     public void whenRentingOneRegularMovieForThreeDays_TotalShouldBeTheRegularRatePlusRegularPentaltyRate() {
         givenRental(Type.REGULAR, 3);
         printStatement();
-        assertTotalOwed(Rates.regular + Rates.regularPenalty);
+        assertTotalOwed(2 + 1.5);
     }
 
     @Test
     public void whenRentingOneRegularMovieForFourDays_TotalShouldBeTheRegularRatePlusRegularPenaltyRateTimesTwo() {
         givenRental(Type.REGULAR, 4);
         printStatement();
-        assertTotalOwed(Rates.regular + (Rates.regularPenalty * 2));
+        assertTotalOwed(2 + (1.5 * 2));
     }
 
     @Test
     public void whenRentingOneChildrensMovieForOneDay_TotalShouldBeTheChildrensRate() {
         givenRental(Type.CHILDRENS, 1);
         printStatement();
-        assertTotalOwed(Rates.childrens);
+        assertTotalOwed(1.5);
     }
 
     @Test
     public void whenRentingOneChildrensMovieForThreeDays_TotalShouldBeTheChildrensRate() {
         givenRental(Type.CHILDRENS, 3);
         printStatement();
-        assertTotalOwed(Rates.childrens);
+        assertTotalOwed(1.5);
     }
 
     @Test
     public void whenRentingOneChildrensMovieForFourDays_TotalShouldBeTheChildrensRatePlusChildrensPenalty() {
         givenRental(Type.CHILDRENS, 4);
         printStatement();
-        assertTotalOwed(Rates.childrens + Rates.childrensPenalty);
+        assertTotalOwed(1.5 + 1.5);
     }
 
     @Test
     public void whenRentingOneChildrensMovieForFiveDays_TotalShouldBeTheChildrensRatePlusChildrensPenaltyTimesTwo() {
         givenRental(Type.CHILDRENS, 5);
         printStatement();
-        assertTotalOwed(Rates.childrens + (Rates.childrensPenalty * 2));
+        assertTotalOwed(1.5 + (1.5 * 2));
     }
 
     @Test
     public void whenRentingOneNewReleaseForOneDay_TotalShouldBeTheNewReleaseRate() {
         givenRental(Type.NEW_RELEASE, 1);
         printStatement();
-        assertTotalOwed(Rates.newRelease);
+        assertTotalOwed(3);
     }
 
     @Test
     public void whenRentingOneNewReleaseForTwoDays_TotalShouldBeTheNewReleaseRateTimesTwo() {
         givenRental(Type.NEW_RELEASE, 2);
         printStatement();
-        assertTotalOwed(Rates.newRelease * 2);
+        assertTotalOwed(3 * 2);
     }
 
     @Test
     public void whenRentingOneNewReleaseForThreeDays_TotalShouldBeTheNewReleaseRateTimesThree() {
         givenRental(Type.NEW_RELEASE, 3);
         printStatement();
-        assertTotalOwed(Rates.newRelease * 3);
+        assertTotalOwed(3 * 3);
     }
 }
