@@ -1,6 +1,9 @@
 package hm.videostore;
 
 import static hm.videostore.Context.movieRepository;
+import hm.videostore.rentstrategy.RentStrategy;
+import hm.videostore.rentstrategy.RentStrategyFactory;
+import hm.videostore.repository.MovieData;
 
 import java.util.List;
 
@@ -21,8 +24,13 @@ public class PrintStatementUseCase {
     }
 
     private void sumRental(RentalData rental) {
-        Movie movie = MovieFactory.make(movieRepository.findById(rental.movieId));
-        statement.totalOwed += movie.calculateRentalPrice(rental.daysRented);
-        statement.frequentRenterPoints += movie.calculateFrequentRenterPoints(rental.daysRented);
+        RentStrategy rentStrategy = getRentStrategy(rental);
+        statement.totalOwed += rentStrategy.calculateRentalPrice();
+        statement.frequentRenterPoints += rentStrategy.calculateFrequentRenterPoints();
+    }
+
+    private RentStrategy getRentStrategy(RentalData rental) {
+        MovieData movieData = movieRepository.findById(rental.movieId);
+        return RentStrategyFactory.make(movieData.typeCode, rental.daysRented);
     }
 }
