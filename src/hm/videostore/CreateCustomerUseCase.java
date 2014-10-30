@@ -1,7 +1,7 @@
 package hm.videostore;
 
 import static hm.videostore.Context.customerRepository;
-import hm.videostore.repository.CustomerData;
+import hm.videostore.data.CustomerData;
 
 public class CreateCustomerUseCase {
     private String name;

@@ -1,11 +1,16 @@
 package hm.videostore.rentstrategy;
 
+import hm.videostore.data.MovieType;
+
 public class RentStrategyFactory {
-    public static RentStrategy make(int typeCode, int daysRented) {
-        RentStrategy rentStrategy;
-        if (typeCode == 1) rentStrategy = new RegularRentStrategy(daysRented);
-        else if (typeCode == 2) rentStrategy = new ChildrensRentStrategy(daysRented);
-        else rentStrategy = new NewReleaseRentStrategy(daysRented);
-        return rentStrategy;
+    public static RentStrategy make(MovieType type, int daysRented) {
+        switch (type) {
+            case CHILDRENS:
+                return new ChildrensRentStrategy(daysRented);
+            case NEW_RELEASE:
+                return new NewReleaseRentStrategy(daysRented);
+            default:
+                return new RegularRentStrategy(daysRented);
+        }
     }
 }

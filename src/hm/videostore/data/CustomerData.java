@@ -1,4 +1,4 @@
-package hm.videostore.repository;
+package hm.videostore.data;
 
 public class CustomerData extends EntityData {
     public String name;

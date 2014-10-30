@@ -1,6 +1,7 @@
 package hm.videostore;
 
-import static hm.videostore.Type.*;
+import hm.videostore.data.MovieType;
+import static hm.videostore.data.MovieType.*;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,7 +14,7 @@ public class VideoStoreTest {
     private StatementData statement;
     private String customerId;
 
-    private void givenRental(Type type, int daysRented) {
+    private void givenRental(MovieType type, int daysRented) {
         String movieId = createMovie(type);
 
         RentalData rental = new RentalData();
@@ -30,8 +31,8 @@ public class VideoStoreTest {
         return new CreateCustomerUseCase(name).execute();
     }
 
-    private String createMovie(Type type) {
-        return new CreateMovieUseCase(type.code, String.format("Movie no. %f", Math.random())).execute();
+    private String createMovie(MovieType type) {
+        return new CreateMovieUseCase(type, String.format("Movie no. %f", Math.random())).execute();
     }
 
     private void printStatement() {

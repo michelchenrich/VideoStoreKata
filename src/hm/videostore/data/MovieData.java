@@ -1,6 +1,6 @@
-package hm.videostore.repository;
+package hm.videostore.data;
 
 public class MovieData extends EntityData {
     public String name;
-    public int typeCode;
+    public MovieType type;
 }

@@ -1,6 +1,6 @@
 package hm.videostore;
 
-import hm.videostore.repository.CustomerData;
+import hm.videostore.data.CustomerData;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import org.junit.Before;

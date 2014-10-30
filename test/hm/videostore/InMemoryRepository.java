@@ -1,7 +1,7 @@
 package hm.videostore;
 
-import hm.videostore.repository.EntityData;
-import hm.videostore.repository.Repository;
+import hm.videostore.data.EntityData;
+import hm.videostore.data.Repository;
 
 import java.util.HashMap;
 import java.util.Map;

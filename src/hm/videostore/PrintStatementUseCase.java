@@ -2,9 +2,9 @@ package hm.videostore;
 
 import static hm.videostore.Context.customerRepository;
 import static hm.videostore.Context.movieRepository;
+import hm.videostore.data.MovieData;
 import hm.videostore.rentstrategy.RentStrategy;
 import hm.videostore.rentstrategy.RentStrategyFactory;
-import hm.videostore.repository.MovieData;
 
 import java.util.List;
 
@@ -37,6 +37,6 @@ public class PrintStatementUseCase {
 
     private RentStrategy getRentStrategy(RentalData rental) {
         MovieData movieData = movieRepository.findById(rental.movieId);
-        return RentStrategyFactory.make(movieData.typeCode, rental.daysRented);
+        return RentStrategyFactory.make(movieData.type, rental.daysRented);
     }
 }

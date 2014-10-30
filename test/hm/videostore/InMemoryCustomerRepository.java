@@ -1,6 +1,6 @@
 package hm.videostore;
 
-import hm.videostore.repository.CustomerData;
+import hm.videostore.data.CustomerData;
 
 class InMemoryCustomerRepository extends InMemoryRepository<CustomerData> {
     public CustomerData makeCopy(CustomerData customer) {
