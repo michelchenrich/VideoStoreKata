@@ -6,4 +6,10 @@ public class NewReleaseMovie extends Movie {
         value = 3 * daysRented;
         return value;
     }
+
+    public int calculateFrequentRenterPoints(int daysRented) {
+        if (daysRented > 2)
+            return 2;
+        return super.calculateFrequentRenterPoints(daysRented);
+    }
 }

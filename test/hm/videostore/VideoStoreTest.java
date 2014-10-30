@@ -1,5 +1,6 @@
 package hm.videostore;
 
+import static hm.videostore.Type.*;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,6 +33,10 @@ public class VideoStoreTest {
         assertEquals(totalOwed, statement.totalOwed, .0001);
     }
 
+    private void assertFrequentRenterPoints(int points) {
+        assertEquals(points, statement.frequentRenterPoints);
+    }
+
     @Before
     public void setUp() {
         Context.movieRepository = new InMemoryMovieRepository();
@@ -40,78 +45,124 @@ public class VideoStoreTest {
 
     @Test
     public void whenRentingOneRegularMovieForOneDay_TotalShouldBeTheRegularRate() {
-        givenRental(Type.REGULAR, 1);
+        givenRental(REGULAR, 1);
         printStatement();
         assertTotalOwed(2);
     }
 
     @Test
     public void whenRentingOneRegularMoviePorTwoDays_TotalShouldBeTheRegularRate() {
-        givenRental(Type.REGULAR, 2);
+        givenRental(REGULAR, 2);
         printStatement();
         assertTotalOwed(2);
     }
 
     @Test
     public void whenRentingOneRegularMovieForThreeDays_TotalShouldBeTheRegularRatePlusRegularPentaltyRate() {
-        givenRental(Type.REGULAR, 3);
+        givenRental(REGULAR, 3);
         printStatement();
         assertTotalOwed(2 + 1.5);
     }
 
     @Test
     public void whenRentingOneRegularMovieForFourDays_TotalShouldBeTheRegularRatePlusRegularPenaltyRateTimesTwo() {
-        givenRental(Type.REGULAR, 4);
+        givenRental(REGULAR, 4);
         printStatement();
         assertTotalOwed(2 + (1.5 * 2));
     }
 
     @Test
     public void whenRentingOneChildrensMovieForOneDay_TotalShouldBeTheChildrensRate() {
-        givenRental(Type.CHILDRENS, 1);
+        givenRental(CHILDRENS, 1);
         printStatement();
         assertTotalOwed(1.5);
     }
 
     @Test
     public void whenRentingOneChildrensMovieForThreeDays_TotalShouldBeTheChildrensRate() {
-        givenRental(Type.CHILDRENS, 3);
+        givenRental(CHILDRENS, 3);
         printStatement();
         assertTotalOwed(1.5);
     }
 
     @Test
     public void whenRentingOneChildrensMovieForFourDays_TotalShouldBeTheChildrensRatePlusChildrensPenalty() {
-        givenRental(Type.CHILDRENS, 4);
+        givenRental(CHILDRENS, 4);
         printStatement();
         assertTotalOwed(1.5 + 1.5);
     }
 
     @Test
     public void whenRentingOneChildrensMovieForFiveDays_TotalShouldBeTheChildrensRatePlusChildrensPenaltyTimesTwo() {
-        givenRental(Type.CHILDRENS, 5);
+        givenRental(CHILDRENS, 5);
         printStatement();
         assertTotalOwed(1.5 + (1.5 * 2));
     }
 
     @Test
     public void whenRentingOneNewReleaseForOneDay_TotalShouldBeTheNewReleaseRate() {
-        givenRental(Type.NEW_RELEASE, 1);
+        givenRental(NEW_RELEASE, 1);
         printStatement();
         assertTotalOwed(3);
     }
 
     @Test
     public void whenRentingOneNewReleaseForTwoDays_TotalShouldBeTheNewReleaseRateTimesTwo() {
-        givenRental(Type.NEW_RELEASE, 2);
+        givenRental(NEW_RELEASE, 2);
         printStatement();
         assertTotalOwed(3 * 2);
     }
 
     @Test
     public void whenRentingOneNewReleaseForThreeDays_TotalShouldBeTheNewReleaseRateTimesThree() {
-        givenRental(Type.NEW_RELEASE, 3);
+        givenRental(NEW_RELEASE, 3);
         printStatement();
         assertTotalOwed(3 * 3);
+    }
+
+    @Test
+    public void whenRetingManyMovies_TotalShouldBeTheSum() {
+        givenRental(REGULAR, 3);
+        givenRental(CHILDRENS, 3);
+        givenRental(NEW_RELEASE, 3);
+        printStatement();
+        assertTotalOwed((2 + 1.5) + (1.5) + (3 * 3));
+    }
+
+    @Test
+    public void whenRentingOneRegularMovie_FrequentRenterPointsShouldBeOne() {
+        givenRental(REGULAR, 3);
+        printStatement();
+        assertFrequentRenterPoints(1);
+    }
+
+    @Test
+    public void whenRentingOneChildrensMovie_FrequentRenterPointsShouldBeOne() {
+        givenRental(CHILDRENS, 3);
+        printStatement();
+        assertFrequentRenterPoints(1);
+    }
+
+    @Test
+    public void whenRentingOneNewReleaseForOneDay_FrequentRenterPointsShouldBeOne() {
+        givenRental(NEW_RELEASE, 1);
+        printStatement();
+        assertFrequentRenterPoints(1);
+    }
+
+    @Test
+    public void whenRentingOneNewReleaseForMoreThanTwoDays_FrequentRenterPointsShouldBeTwo() {
+        givenRental(NEW_RELEASE, 5);
+        printStatement();
+        assertFrequentRenterPoints(2);
+    }
+
+    @Test
+    public void whenRentingManyMovies_FrequentRenterPointsShouldBeTheSum() {
+        givenRental(REGULAR, 1);
+        givenRental(CHILDRENS, 2);
+        givenRental(NEW_RELEASE, 3);
+        printStatement();
+        assertFrequentRenterPoints(1 + 1 + 2);
     }
 }
