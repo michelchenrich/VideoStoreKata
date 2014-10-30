@@ -1,6 +1,5 @@
 package hm.videostore;
 
-import hm.videostore.repository.MovieData;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +34,7 @@ public class VideoStoreTest {
 
     @Before
     public void setUp() {
-        Context.movieRepository = new InMemoryRepository<MovieData>();
+        Context.movieRepository = new InMemoryMovieRepository();
 
         double seed = Math.random();
         Rates.regular = seed * 2;

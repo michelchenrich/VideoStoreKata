@@ -7,12 +7,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class CreateMovieTest {
-    private InMemoryRepository<MovieData> inMemoryRepository;
+    private InMemoryMovieRepository inMemoryMovieRepository;
 
     @Before
     public void setUp() {
-        inMemoryRepository = new InMemoryRepository<MovieData>();
-        Context.movieRepository = inMemoryRepository;
+        inMemoryMovieRepository = new InMemoryMovieRepository();
+        Context.movieRepository = inMemoryMovieRepository;
     }
 
     @Test
@@ -20,12 +20,12 @@ public class CreateMovieTest {
         String id1 = createMovie(Type.REGULAR, "Movie Name 1");
         String id2 = createMovie(Type.CHILDRENS, "Movie Name 2");
 
-        MovieData movie = inMemoryRepository.findById(id1);
+        MovieData movie = inMemoryMovieRepository.findById(id1);
         assertEquals(id1, movie.id);
         assertEquals("Movie Name 1", movie.name);
         assertEquals(Type.REGULAR.code, movie.typeCode);
 
-        movie = inMemoryRepository.findById(id2);
+        movie = inMemoryMovieRepository.findById(id2);
         assertEquals(id2, movie.id);
         assertEquals("Movie Name 2", movie.name);
         assertEquals(Type.CHILDRENS.code, movie.typeCode);
@@ -37,11 +37,11 @@ public class CreateMovieTest {
         movie.id = "1";
         movie.name = "a";
 
-        inMemoryRepository.save(movie);
+        inMemoryMovieRepository.save(movie);
 
         movie.name = "b";
 
-        assertNotEquals(movie.name, inMemoryRepository.findById(movie.id).name);
+        assertNotEquals(movie.name, inMemoryMovieRepository.findById(movie.id).name);
     }
 
     private String createMovie(Type type, String name) {
