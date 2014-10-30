@@ -11,6 +11,7 @@ import java.util.List;
 public class VideoStoreTest {
     private List<RentalData> rentals;
     private StatementData statement;
+    private String customerId;
 
     private void givenRental(Type type, int daysRented) {
         String movieId = createMovie(type);
@@ -21,12 +22,20 @@ public class VideoStoreTest {
         rentals.add(rental);
     }
 
+    private void givenCustomer(String name) {
+        customerId = createCustomer(name);
+    }
+
+    private String createCustomer(String name) {
+        return new CreateCustomerUseCase(name).execute();
+    }
+
     private String createMovie(Type type) {
         return new CreateMovieUseCase(type.code, String.format("Movie no. %f", Math.random())).execute();
     }
 
     private void printStatement() {
-        statement = new PrintStatementUseCase(rentals).execute();
+        statement = new PrintStatementUseCase(customerId, rentals).execute();
     }
 
     private void assertTotalOwed(double totalOwed) {
@@ -37,10 +46,16 @@ public class VideoStoreTest {
         assertEquals(points, statement.frequentRenterPoints);
     }
 
+    private void assertCustomerName(String name) {
+        assertEquals(name, statement.customerName);
+    }
+
     @Before
     public void setUp() {
         Context.movieRepository = new InMemoryMovieRepository();
+        Context.customerRepository = new InMemoryCustomerRepository();
         rentals = new ArrayList<RentalData>();
+        givenCustomer("Default Customer");
     }
 
     @Test
@@ -164,5 +179,12 @@ public class VideoStoreTest {
         givenRental(NEW_RELEASE, 3);
         printStatement();
         assertFrequentRenterPoints(1 + 1 + 2);
+    }
+
+    @Test
+    public void givenACustomerId_ItsNameMustBePrintedInTheStatement() {
+        givenCustomer("Customer Name");
+        printStatement();
+        assertCustomerName("Customer Name");
     }
 }
