@@ -1,5 +1,6 @@
 package hm.videostore;
 
+import static hm.videostore.Context.customerRepository;
 import static hm.videostore.Context.movieRepository;
 import hm.videostore.rentstrategy.RentStrategy;
 import hm.videostore.rentstrategy.RentStrategyFactory;
@@ -19,19 +20,19 @@ public class PrintStatementUseCase {
 
     public StatementData execute() {
         statement = new StatementData();
-        statement.customerName = getCustomerName();
+        writeCustomerName();
         for (RentalData rental : rentals) sumRental(rental);
         return statement;
     }
 
-    private String getCustomerName() {
-        return Context.customerRepository.findById(customerId).name;
+    private void writeCustomerName() {
+        statement.customerName = customerRepository.findById(customerId).name;
     }
 
     private void sumRental(RentalData rental) {
         RentStrategy rentStrategy = getRentStrategy(rental);
-        statement.totalOwed += rentStrategy.calculateRentalPrice();
-        statement.frequentRenterPoints += rentStrategy.calculateFrequentRenterPoints();
+        statement.totalOwed += rentStrategy.calculatePrice();
+        statement.frequentRenterPoints += rentStrategy.calculatePoints();
     }
 
     private RentStrategy getRentStrategy(RentalData rental) {

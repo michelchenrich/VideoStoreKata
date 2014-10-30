@@ -7,9 +7,9 @@ public abstract class RentStrategy {
         this.daysRented = daysRented;
     }
 
-    public abstract double calculateRentalPrice();
+    public abstract double calculatePrice();
 
-    public int calculateFrequentRenterPoints() {
+    public int calculatePoints() {
         return 1;
     }
 }

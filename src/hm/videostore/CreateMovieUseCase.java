@@ -1,10 +1,11 @@
 package hm.videostore;
 
+import static hm.videostore.Context.movieRepository;
 import hm.videostore.repository.MovieData;
 
 public class CreateMovieUseCase {
-    private final int typeCode;
-    private final String name;
+    private int typeCode;
+    private String name;
 
     public CreateMovieUseCase(int typeCode, String name) {
         this.typeCode = typeCode;
@@ -13,10 +14,10 @@ public class CreateMovieUseCase {
 
     public String execute() {
         MovieData movie = new MovieData();
-        movie.id = Context.movieRepository.getNextId();
+        movie.id = movieRepository.getNextId();
         movie.name = name;
         movie.typeCode = typeCode;
-        Context.movieRepository.save(movie);
+        movieRepository.save(movie);
         return movie.id;
     }
 }

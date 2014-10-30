@@ -5,7 +5,7 @@ public class ChildrensRentStrategy extends RentStrategy {
         super(daysRented);
     }
 
-    public double calculateRentalPrice() {
+    public double calculatePrice() {
         double value;
         if (daysRented > 3)
             value = 1.5 + (1.5 * (daysRented - 3));

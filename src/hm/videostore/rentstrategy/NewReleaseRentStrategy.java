@@ -5,15 +5,15 @@ public class NewReleaseRentStrategy extends RentStrategy {
         super(daysRented);
     }
 
-    public double calculateRentalPrice() {
+    public double calculatePrice() {
         double value;
         value = 3 * daysRented;
         return value;
     }
 
-    public int calculateFrequentRenterPoints() {
+    public int calculatePoints() {
         if (daysRented > 2)
             return 2;
-        return super.calculateFrequentRenterPoints();
+        return super.calculatePoints();
     }
 }
