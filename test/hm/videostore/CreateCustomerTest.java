@@ -2,20 +2,22 @@ package hm.videostore;
 
 import hm.videostore.customer.CreateCustomerRequest;
 import hm.videostore.customer.CreateCustomerUseCase;
+import hm.videostore.customer.ReadCustomersUseCase;
 import hm.videostore.data.Context;
 import hm.videostore.data.Customer;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Collection;
+
 public class CreateCustomerTest {
-    private InMemoryRepository<Customer> inMemoryCustomerRepository;
+    private Collection<Customer> customers;
 
     @Before
     public void setUp() {
-        inMemoryCustomerRepository = new InMemoryRepository<Customer>();
-        Context.customerRepository = inMemoryCustomerRepository;
+        Context.customerRepository = new InMemoryRepository<Customer>();
     }
 
     @Test
@@ -23,26 +25,25 @@ public class CreateCustomerTest {
         String id1 = createCustomer("Customer Name 1");
         String id2 = createCustomer("Customer Name 2");
 
-        Customer customer = inMemoryCustomerRepository.findById(id1);
-        assertEquals(id1, customer.id);
-        assertEquals("Customer Name 1", customer.name);
+        readCustomers();
 
-        customer = inMemoryCustomerRepository.findById(id2);
-        assertEquals(id2, customer.id);
-        assertEquals("Customer Name 2", customer.name);
+        assertCustomerExists(id1, "Customer Name 1");
+        assertCustomerExists(id2, "Customer Name 2");
     }
 
-    @Test
-    public void afterSavingAMovie_RepositoryShouldNotReflectTransientChanges() {
-        Customer customer = new Customer();
-        customer.id = "1";
-        customer.name = "a";
+    private void assertCustomerExists(String id, String name) {
+        for (Customer customer : customers) {
+            if (customer.id.equals(id)) {
+                assertEquals(id, customer.id);
+                assertEquals(name, customer.name);
+                return;
+            }
+        }
+        fail();
+    }
 
-        inMemoryCustomerRepository.save(customer);
-
-        customer.name = "b";
-
-        assertNotEquals(customer.name, inMemoryCustomerRepository.findById(customer.id).name);
+    private void readCustomers() {
+        customers = new ReadCustomersUseCase().execute().customers;
     }
 
     private String createCustomer(String name) {

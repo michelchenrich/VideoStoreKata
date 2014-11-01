@@ -19,7 +19,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VideoStoreTest {
+public class PrintStatementTest {
     public static final PrintStatementUseCase USE_CASE = new PrintStatementUseCase();
     private List<PrintStatementRequest.Rental> rentals;
     private PrintStatementResponse statement;

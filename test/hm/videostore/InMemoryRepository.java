@@ -4,6 +4,8 @@ import hm.videostore.data.Entity;
 import hm.videostore.data.Repository;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,11 +18,19 @@ class InMemoryRepository<TEntity extends Entity> implements Repository<TEntity> 
     }
 
     public TEntity findById(String id) {
-        return entities.get(id);
+        return makeCopy(entities.get(id));
     }
 
     public String getNextId() {
         return String.valueOf(++incrementalId);
+    }
+
+    public Collection<TEntity> findAll() {
+        Collection<TEntity> copies = new ArrayList<TEntity>();
+        for (TEntity entity : entities.values()) {
+            copies.add(makeCopy(entity));
+        }
+        return copies;
     }
 
     private TEntity makeCopy(TEntity entity) {
