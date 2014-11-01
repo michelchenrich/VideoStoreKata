@@ -1,5 +1,5 @@
 package hm.videostore.data;
 
-public class CustomerData extends EntityData {
+public class Customer extends Entity {
     public String name;
 }

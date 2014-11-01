@@ -1,4 +1,4 @@
-package hm.videostore.rentstrategy;
+package hm.videostore.rent.strategy;
 
 public abstract class RentStrategy {
     protected int daysRented;

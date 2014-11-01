@@ -1,6 +1,9 @@
 package hm.videostore;
 
-import hm.videostore.data.CustomerData;
+import hm.videostore.customer.CreateCustomerRequest;
+import hm.videostore.customer.CreateCustomerUseCase;
+import hm.videostore.data.Context;
+import hm.videostore.data.Customer;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import org.junit.Before;
@@ -20,7 +23,7 @@ public class CreateCustomerTest {
         String id1 = createCustomer("Customer Name 1");
         String id2 = createCustomer("Customer Name 2");
 
-        CustomerData customer = inMemoryCustomerRepository.findById(id1);
+        Customer customer = inMemoryCustomerRepository.findById(id1);
         assertEquals(id1, customer.id);
         assertEquals("Customer Name 1", customer.name);
 
@@ -31,7 +34,7 @@ public class CreateCustomerTest {
 
     @Test
     public void afterSavingAMovie_RepositoryShouldNotReflectTransientChanges() {
-        CustomerData customer = new CustomerData();
+        Customer customer = new Customer();
         customer.id = "1";
         customer.name = "a";
 
@@ -43,6 +46,8 @@ public class CreateCustomerTest {
     }
 
     private String createCustomer(String name) {
-        return new CreateCustomerUseCase(name).execute();
+        CreateCustomerRequest request = new CreateCustomerRequest();
+        request.name = name;
+        return new CreateCustomerUseCase().execute(request).id;
     }
 }

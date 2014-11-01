@@ -1,4 +1,4 @@
-package hm.videostore.rentstrategy;
+package hm.videostore.rent.strategy;
 
 public class RegularRentStrategy extends RentStrategy {
     public RegularRentStrategy(int daysRented) {

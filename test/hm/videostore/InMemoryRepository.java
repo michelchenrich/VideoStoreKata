@@ -1,12 +1,12 @@
 package hm.videostore;
 
-import hm.videostore.data.EntityData;
+import hm.videostore.data.Entity;
 import hm.videostore.data.Repository;
 
 import java.util.HashMap;
 import java.util.Map;
 
-abstract class InMemoryRepository<TEntity extends EntityData> implements Repository<TEntity> {
+abstract class InMemoryRepository<TEntity extends Entity> implements Repository<TEntity> {
     private Map<String, TEntity> entities = new HashMap<String, TEntity>();
     private int incrementalId;
 

@@ -1,8 +1,17 @@
 package hm.videostore;
 
-import hm.videostore.data.MovieType;
-import static hm.videostore.data.MovieType.*;
+import hm.videostore.customer.CreateCustomerRequest;
+import hm.videostore.customer.CreateCustomerUseCase;
+import hm.videostore.data.Context;
+import hm.videostore.data.Movie;
+import static hm.videostore.data.Movie.Type.*;
+import hm.videostore.movie.CreateMovieRequest;
+import hm.videostore.movie.CreateMovieUseCase;
+import hm.videostore.rent.PrintStatementRequest;
+import hm.videostore.rent.PrintStatementResponse;
+import hm.videostore.rent.PrintStatementUseCase;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -10,14 +19,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VideoStoreTest {
-    private List<RentalData> rentals;
-    private StatementData statement;
+    private List<PrintStatementRequest.Rental> rentals;
+    private PrintStatementResponse statement;
     private String customerId;
+    private int currentStatementLine = 0;
 
-    private void givenRental(MovieType type, int daysRented) {
-        String movieId = createMovie(type);
+    private void givenRental(Movie.Type type, int daysRented) {
+        givenRental(type, daysRented, String.format("Movie no. %f", Math.random()));
+    }
 
-        RentalData rental = new RentalData();
+    private void givenRental(Movie.Type type, int daysRented, String movieName) {
+        String movieId = createMovie(type, movieName);
+
+        PrintStatementRequest.Rental rental = new PrintStatementRequest.Rental();
         rental.movieId = movieId;
         rental.daysRented = daysRented;
         rentals.add(rental);
@@ -28,15 +42,23 @@ public class VideoStoreTest {
     }
 
     private String createCustomer(String name) {
-        return new CreateCustomerUseCase(name).execute();
+        CreateCustomerRequest request = new CreateCustomerRequest();
+        request.name = name;
+        return new CreateCustomerUseCase().execute(request).id;
     }
 
-    private String createMovie(MovieType type) {
-        return new CreateMovieUseCase(type, String.format("Movie no. %f", Math.random())).execute();
+    private String createMovie(Movie.Type type, String name) {
+        CreateMovieRequest request = new CreateMovieRequest();
+        request.type = type;
+        request.name = name;
+        return new CreateMovieUseCase().execute(request).id;
     }
 
     private void printStatement() {
-        statement = new PrintStatementUseCase(customerId, rentals).execute();
+        PrintStatementRequest request = new PrintStatementRequest();
+        request.customerId = customerId;
+        request.rentals = rentals.toArray(new PrintStatementRequest.Rental[rentals.size()]);
+        statement = new PrintStatementUseCase().execute(request);
     }
 
     private void assertTotalOwed(double totalOwed) {
@@ -55,7 +77,7 @@ public class VideoStoreTest {
     public void setUp() {
         Context.movieRepository = new InMemoryMovieRepository();
         Context.customerRepository = new InMemoryCustomerRepository();
-        rentals = new ArrayList<RentalData>();
+        rentals = new ArrayList<PrintStatementRequest.Rental>();
         givenCustomer("Default Customer");
     }
 
@@ -187,5 +209,22 @@ public class VideoStoreTest {
         givenCustomer("Customer Name");
         printStatement();
         assertCustomerName("Customer Name");
+    }
+
+    @Test
+    public void givenAMovie_ShouldPrintItsDetailsInAStatementLine() {
+        givenRental(REGULAR, 2, "Regular Movie");
+        printStatement();
+        assertStatementLine("Regular Movie", 2, 2.0, 1);
+    }
+
+    private void assertStatementLine(String movieName, int daysRented, double price, int points) {
+        assertNotNull(statement.lines);
+        PrintStatementResponse.Line line = statement.lines[currentStatementLine];
+        assertEquals(movieName, line.movieName);
+        assertEquals(daysRented, line.daysRented);
+        assertEquals(price, line.price, .0001);
+        assertEquals(points, line.points);
+        currentStatementLine++;
     }
 }

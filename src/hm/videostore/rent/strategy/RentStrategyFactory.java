@@ -1,9 +1,9 @@
-package hm.videostore.rentstrategy;
+package hm.videostore.rent.strategy;
 
-import hm.videostore.data.MovieType;
+import hm.videostore.data.Movie;
 
 public class RentStrategyFactory {
-    public static RentStrategy make(MovieType type, int daysRented) {
+    public static RentStrategy make(Movie.Type type, int daysRented) {
         switch (type) {
             case CHILDRENS:
                 return new ChildrensRentStrategy(daysRented);

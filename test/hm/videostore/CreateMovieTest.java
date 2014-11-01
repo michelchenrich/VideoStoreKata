@@ -1,7 +1,9 @@
 package hm.videostore;
 
-import hm.videostore.data.MovieData;
-import hm.videostore.data.MovieType;
+import hm.videostore.data.Context;
+import hm.videostore.data.Movie;
+import hm.videostore.movie.CreateMovieRequest;
+import hm.videostore.movie.CreateMovieUseCase;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import org.junit.Before;
@@ -18,23 +20,23 @@ public class CreateMovieTest {
 
     @Test
     public void afterCreatingMovie_GatewayShouldTheEntry() {
-        String id1 = createMovie(MovieType.REGULAR, "Movie Name 1");
-        String id2 = createMovie(MovieType.CHILDRENS, "Movie Name 2");
+        String id1 = createMovie(Movie.Type.REGULAR, "Movie Name 1");
+        String id2 = createMovie(Movie.Type.CHILDRENS, "Movie Name 2");
 
-        MovieData movie = inMemoryMovieRepository.findById(id1);
+        Movie movie = inMemoryMovieRepository.findById(id1);
         assertEquals(id1, movie.id);
         assertEquals("Movie Name 1", movie.name);
-        assertEquals(MovieType.REGULAR, movie.type);
+        assertEquals(Movie.Type.REGULAR, movie.type);
 
         movie = inMemoryMovieRepository.findById(id2);
         assertEquals(id2, movie.id);
         assertEquals("Movie Name 2", movie.name);
-        assertEquals(MovieType.CHILDRENS, movie.type);
+        assertEquals(Movie.Type.CHILDRENS, movie.type);
     }
 
     @Test
     public void afterSavingAMovie_RepositoryShouldNotReflectTransientChanges() {
-        MovieData movie = new MovieData();
+        Movie movie = new Movie();
         movie.id = "1";
         movie.name = "a";
 
@@ -45,7 +47,10 @@ public class CreateMovieTest {
         assertNotEquals(movie.name, inMemoryMovieRepository.findById(movie.id).name);
     }
 
-    private String createMovie(MovieType type, String name) {
-        return new CreateMovieUseCase(type, name).execute();
+    private String createMovie(Movie.Type type, String name) {
+        CreateMovieRequest request = new CreateMovieRequest();
+        request.type = type;
+        request.name = name;
+        return new CreateMovieUseCase().execute(request).id;
     }
 }

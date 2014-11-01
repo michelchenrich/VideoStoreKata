@@ -1,5 +1,5 @@
 package hm.videostore.data;
 
-public class EntityData {
+public class Entity {
     public String id;
 }
