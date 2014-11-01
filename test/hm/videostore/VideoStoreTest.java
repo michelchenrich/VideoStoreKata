@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VideoStoreTest {
+    public static final PrintStatementUseCase USE_CASE = new PrintStatementUseCase();
     private List<PrintStatementRequest.Rental> rentals;
     private PrintStatementResponse statement;
     private String customerId;
@@ -59,7 +60,7 @@ public class VideoStoreTest {
         PrintStatementRequest request = new PrintStatementRequest();
         request.customerId = customerId;
         request.rentals = rentals.toArray(new PrintStatementRequest.Rental[rentals.size()]);
-        statement = new PrintStatementUseCase().execute(request);
+        statement = USE_CASE.execute(request);
         rentals.clear();
     }
 
