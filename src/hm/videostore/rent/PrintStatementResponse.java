@@ -1,10 +1,11 @@
 package hm.videostore.rent;
 
 public class PrintStatementResponse {
-    public double totalOwed;
-    public int frequentRenterPoints;
+    public double grossAmount;
+    public int pointsGranted;
     public String customerName;
     public Line[] lines;
+    public double netAmount;
 
     public static class Line {
         public String movieName;

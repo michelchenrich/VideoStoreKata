@@ -59,18 +59,34 @@ public class VideoStoreTest {
         request.customerId = customerId;
         request.rentals = rentals.toArray(new PrintStatementRequest.Rental[rentals.size()]);
         statement = new PrintStatementUseCase().execute(request);
+        rentals.clear();
     }
 
-    private void assertTotalOwed(double totalOwed) {
-        assertEquals(totalOwed, statement.totalOwed, .0001);
+    private void assertAmounts(double gross) {
+        assertAmounts(gross, gross);
     }
 
-    private void assertFrequentRenterPoints(int points) {
-        assertEquals(points, statement.frequentRenterPoints);
+    private void assertAmounts(double gross, double net) {
+        assertEquals(gross, statement.grossAmount, .0001);
+        assertEquals(net, statement.netAmount, .0001);
+    }
+
+    private void assertPointsGranted(int points) {
+        assertEquals(points, statement.pointsGranted);
     }
 
     private void assertCustomerName(String name) {
         assertEquals(name, statement.customerName);
+    }
+
+    private void assertStatementLine(String movieName, int daysRented, double price, int points) {
+        assertNotNull(statement.lines);
+        PrintStatementResponse.Line line = statement.lines[currentStatementLine];
+        assertEquals(movieName, line.movieName);
+        assertEquals(daysRented, line.daysRented);
+        assertEquals(price, line.price, .0001);
+        assertEquals(points, line.points);
+        currentStatementLine++;
     }
 
     @Before
@@ -85,77 +101,77 @@ public class VideoStoreTest {
     public void whenRentingOneRegularMovieForOneDay_TotalShouldBeTheRegularRate() {
         givenRental(REGULAR, 1);
         printStatement();
-        assertTotalOwed(2);
+        assertAmounts(2);
     }
 
     @Test
     public void whenRentingOneRegularMoviePorTwoDays_TotalShouldBeTheRegularRate() {
         givenRental(REGULAR, 2);
         printStatement();
-        assertTotalOwed(2);
+        assertAmounts(2);
     }
 
     @Test
     public void whenRentingOneRegularMovieForThreeDays_TotalShouldBeTheRegularRatePlusRegularPentaltyRate() {
         givenRental(REGULAR, 3);
         printStatement();
-        assertTotalOwed(2 + 1.5);
+        assertAmounts(2 + 1.5);
     }
 
     @Test
     public void whenRentingOneRegularMovieForFourDays_TotalShouldBeTheRegularRatePlusRegularPenaltyRateTimesTwo() {
         givenRental(REGULAR, 4);
         printStatement();
-        assertTotalOwed(2 + (1.5 * 2));
+        assertAmounts(2 + (1.5 * 2));
     }
 
     @Test
     public void whenRentingOneChildrensMovieForOneDay_TotalShouldBeTheChildrensRate() {
         givenRental(CHILDRENS, 1);
         printStatement();
-        assertTotalOwed(1.5);
+        assertAmounts(1.5);
     }
 
     @Test
     public void whenRentingOneChildrensMovieForThreeDays_TotalShouldBeTheChildrensRate() {
         givenRental(CHILDRENS, 3);
         printStatement();
-        assertTotalOwed(1.5);
+        assertAmounts(1.5);
     }
 
     @Test
     public void whenRentingOneChildrensMovieForFourDays_TotalShouldBeTheChildrensRatePlusChildrensPenalty() {
         givenRental(CHILDRENS, 4);
         printStatement();
-        assertTotalOwed(1.5 + 1.5);
+        assertAmounts(1.5 + 1.5);
     }
 
     @Test
     public void whenRentingOneChildrensMovieForFiveDays_TotalShouldBeTheChildrensRatePlusChildrensPenaltyTimesTwo() {
         givenRental(CHILDRENS, 5);
         printStatement();
-        assertTotalOwed(1.5 + (1.5 * 2));
+        assertAmounts(1.5 + (1.5 * 2));
     }
 
     @Test
     public void whenRentingOneNewReleaseForOneDay_TotalShouldBeTheNewReleaseRate() {
         givenRental(NEW_RELEASE, 1);
         printStatement();
-        assertTotalOwed(3);
+        assertAmounts(3);
     }
 
     @Test
     public void whenRentingOneNewReleaseForTwoDays_TotalShouldBeTheNewReleaseRateTimesTwo() {
         givenRental(NEW_RELEASE, 2);
         printStatement();
-        assertTotalOwed(3 * 2);
+        assertAmounts(3 * 2);
     }
 
     @Test
     public void whenRentingOneNewReleaseForThreeDays_TotalShouldBeTheNewReleaseRateTimesThree() {
         givenRental(NEW_RELEASE, 3);
         printStatement();
-        assertTotalOwed(3 * 3);
+        assertAmounts(3 * 3);
     }
 
     @Test
@@ -164,35 +180,35 @@ public class VideoStoreTest {
         givenRental(CHILDRENS, 3);
         givenRental(NEW_RELEASE, 3);
         printStatement();
-        assertTotalOwed((2 + 1.5) + (1.5) + (3 * 3));
+        assertAmounts((2 + 1.5) + (1.5) + (3 * 3));
     }
 
     @Test
     public void whenRentingOneRegularMovie_FrequentRenterPointsShouldBeOne() {
         givenRental(REGULAR, 3);
         printStatement();
-        assertFrequentRenterPoints(1);
+        assertPointsGranted(1);
     }
 
     @Test
     public void whenRentingOneChildrensMovie_FrequentRenterPointsShouldBeOne() {
         givenRental(CHILDRENS, 3);
         printStatement();
-        assertFrequentRenterPoints(1);
+        assertPointsGranted(1);
     }
 
     @Test
     public void whenRentingOneNewReleaseForOneDay_FrequentRenterPointsShouldBeOne() {
         givenRental(NEW_RELEASE, 1);
         printStatement();
-        assertFrequentRenterPoints(1);
+        assertPointsGranted(1);
     }
 
     @Test
     public void whenRentingOneNewReleaseForMoreThanTwoDays_FrequentRenterPointsShouldBeTwo() {
         givenRental(NEW_RELEASE, 5);
         printStatement();
-        assertFrequentRenterPoints(2);
+        assertPointsGranted(2);
     }
 
     @Test
@@ -201,7 +217,7 @@ public class VideoStoreTest {
         givenRental(CHILDRENS, 2);
         givenRental(NEW_RELEASE, 3);
         printStatement();
-        assertFrequentRenterPoints(1 + 1 + 2);
+        assertPointsGranted(1 + 1 + 2);
     }
 
     @Test
@@ -214,17 +230,22 @@ public class VideoStoreTest {
     @Test
     public void givenAMovie_ShouldPrintItsDetailsInAStatementLine() {
         givenRental(REGULAR, 2, "Regular Movie");
+        givenRental(NEW_RELEASE, 3, "Newly Released Movie");
         printStatement();
         assertStatementLine("Regular Movie", 2, 2.0, 1);
+        assertStatementLine("Newly Released Movie", 3, 9.0, 2);
     }
 
-    private void assertStatementLine(String movieName, int daysRented, double price, int points) {
-        assertNotNull(statement.lines);
-        PrintStatementResponse.Line line = statement.lines[currentStatementLine];
-        assertEquals(movieName, line.movieName);
-        assertEquals(daysRented, line.daysRented);
-        assertEquals(price, line.price, .0001);
-        assertEquals(points, line.points);
-        currentStatementLine++;
+    @Test
+    public void givenASecondRentalForSameCustomer_ThePreviouslyReceivedPointsShouldBeDeductedFromTheNetAmount() {
+        givenCustomer("Customer Name");
+        givenRental(REGULAR, 1);
+        givenRental(CHILDRENS, 2);
+        givenRental(NEW_RELEASE, 3);
+        printStatement();
+
+        givenRental(NEW_RELEASE, 2);
+        printStatement();
+        assertAmounts(6, 2);
     }
 }

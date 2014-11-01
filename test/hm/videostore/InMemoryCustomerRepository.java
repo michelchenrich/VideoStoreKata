@@ -7,6 +7,7 @@ class InMemoryCustomerRepository extends InMemoryRepository<Customer> {
         Customer copy = new Customer();
         copy.id = customer.id;
         copy.name = customer.name;
+        copy.frequentRenterPoints = customer.frequentRenterPoints;
         return copy;
     }
 }
