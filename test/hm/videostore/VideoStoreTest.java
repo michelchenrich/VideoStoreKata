@@ -3,6 +3,7 @@ package hm.videostore;
 import hm.videostore.customer.CreateCustomerRequest;
 import hm.videostore.customer.CreateCustomerUseCase;
 import hm.videostore.data.Context;
+import hm.videostore.data.Customer;
 import hm.videostore.data.Movie;
 import static hm.videostore.data.Movie.Type.*;
 import hm.videostore.movie.CreateMovieRequest;
@@ -91,8 +92,8 @@ public class VideoStoreTest {
 
     @Before
     public void setUp() {
-        Context.movieRepository = new InMemoryMovieRepository();
-        Context.customerRepository = new InMemoryCustomerRepository();
+        Context.movieRepository = new InMemoryRepository<Movie>();
+        Context.customerRepository = new InMemoryRepository<Customer>();
         rentals = new ArrayList<PrintStatementRequest.Rental>();
         givenCustomer("Default Customer");
     }

@@ -10,11 +10,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class CreateMovieTest {
-    private InMemoryMovieRepository inMemoryMovieRepository;
+    private InMemoryRepository<Movie> inMemoryMovieRepository;
 
     @Before
     public void setUp() {
-        inMemoryMovieRepository = new InMemoryMovieRepository();
+        inMemoryMovieRepository = new InMemoryRepository<Movie>();
         Context.movieRepository = inMemoryMovieRepository;
     }
 

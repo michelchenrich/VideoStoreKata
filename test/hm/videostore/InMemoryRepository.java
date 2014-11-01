@@ -3,10 +3,11 @@ package hm.videostore;
 import hm.videostore.data.Entity;
 import hm.videostore.data.Repository;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
-abstract class InMemoryRepository<TEntity extends Entity> implements Repository<TEntity> {
+class InMemoryRepository<TEntity extends Entity> implements Repository<TEntity> {
     private Map<String, TEntity> entities = new HashMap<String, TEntity>();
     private int incrementalId;
 
@@ -22,5 +23,14 @@ abstract class InMemoryRepository<TEntity extends Entity> implements Repository<
         return String.valueOf(++incrementalId);
     }
 
-    protected abstract TEntity makeCopy(TEntity movie);
+    private TEntity makeCopy(TEntity entity) {
+        try {
+            Class entityClass = entity.getClass();
+            TEntity copy = (TEntity) entityClass.getConstructor().newInstance();
+            for (Field field : entityClass.getFields()) field.set(copy, field.get(entity));
+            return copy;
+        } catch (Exception original) {
+            throw new RuntimeException(original);
+        }
+    }
 }

@@ -10,11 +10,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class CreateCustomerTest {
-    private InMemoryCustomerRepository inMemoryCustomerRepository;
+    private InMemoryRepository<Customer> inMemoryCustomerRepository;
 
     @Before
     public void setUp() {
-        inMemoryCustomerRepository = new InMemoryCustomerRepository();
+        inMemoryCustomerRepository = new InMemoryRepository<Customer>();
         Context.customerRepository = inMemoryCustomerRepository;
     }
 
